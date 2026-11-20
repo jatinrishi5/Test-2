@@ -1,6 +1,12 @@
 (function () {
   'use strict';
 
+  // ---------- Booking settings: edit these two lines ----------
+  // BOOKING_URL: your scheduling page, e.g. 'https://calendly.com/your-name/free-consultation'.
+  // While it is empty, finished requests open an email to CONTACT_EMAIL instead.
+  var BOOKING_URL = '';
+  var CONTACT_EMAIL = 'hello@example.com';
+
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -490,13 +496,39 @@
         return;
       }
       if (!validateStep(3)) return;
-      // No backend: show a confirmation instead of sending data.
-      var firstName = form.elements.name.value.trim().split(/\s+/)[0];
+      var name = form.elements.name.value.trim();
+      var email = form.elements.email.value.trim();
+      var firstName = name.split(/\s+/)[0];
       var services = suggestion() || chosenPlan;
-      $('#success-title').textContent = 'Thanks, ' + firstName + '!';
-      $('#success-text').textContent =
-        'We received your request' + (services ? ' about ' + services : '') + '. We\u2019ll email ' +
-        form.elements.email.value.trim() + ' to schedule your call.';
+      var summary = [
+        'Client type: ' + (clientType() || 'not given'),
+        'Services: ' + (services || 'not sure yet'),
+        'Phone: ' + (form.elements.phone.value.trim() || 'not given'),
+        'Province: ' + (form.elements.province.value || 'not given'),
+        'Notes: ' + (form.elements.message.value.trim() || 'none')
+      ].join('\n');
+      var link = $('#booking-link');
+      if (BOOKING_URL) {
+        // Calendly (and most schedulers) accept name, email and a first answer as query parameters.
+        var sep = BOOKING_URL.indexOf('?') === -1 ? '?' : '&';
+        link.href = BOOKING_URL + sep + 'name=' + encodeURIComponent(name) +
+          '&email=' + encodeURIComponent(email) + '&a1=' + encodeURIComponent(summary);
+        link.setAttribute('target', '_blank');
+        link.innerHTML = 'Choose your time <span class="arrow" aria-hidden="true">\u2192</span>';
+        $('#success-title').textContent = 'Thanks, ' + firstName + '! One last step.';
+        $('#success-text').textContent = 'Pick a time for your free 20-minute call' +
+          (services ? ' about ' + services : '') + '. Your details are already filled in.';
+      } else {
+        link.href = 'mailto:' + CONTACT_EMAIL +
+          '?subject=' + encodeURIComponent('Free consultation request: ' + name) +
+          '&body=' + encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n' + summary +
+            '\n\nPlease suggest a few times for my free 20-minute call.');
+        link.removeAttribute('target');
+        link.innerHTML = 'Send my request <span class="arrow" aria-hidden="true">\u2192</span>';
+        $('#success-title').textContent = 'Thanks, ' + firstName + '! One last step.';
+        $('#success-text').textContent = 'Send your request and we\u2019ll reply to ' + email +
+          ' with times for your free 20-minute call' + (services ? ' about ' + services : '') + '.';
+      }
       form.hidden = true;
       success.hidden = false;
       success.focus();

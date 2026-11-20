@@ -268,6 +268,9 @@ body::before {
 .svc-link:hover { border-color: var(--blue); background: var(--blue-tint); color: var(--blue-dark); }
 .svc-link:hover::after { transform: translateX(2px); }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-top: 1.75rem; }
+.hero-assurances { display: flex; flex-wrap: wrap; gap: .4rem 1.25rem; list-style: none; margin: 1rem 0 0; padding: 0; font-size: .92rem; color: var(--muted); }
+.hero-assurances li { display: inline-flex; align-items: center; gap: .4rem; }
+.hero-assurances li::before { content: "✓"; display: grid; place-items: center; width: 1.15rem; height: 1.15rem; border-radius: 50%; background: var(--blue-soft); color: var(--blue-dark); font-size: .7rem; font-weight: 700; }
 
 @keyframes fade-up { from { opacity: 0; transform: translateY(6px); } }
 
@@ -623,6 +626,11 @@ body::before {
 @media (min-width: 1000px) { .contact-grid { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 4rem; } }
 .contact-info { min-width: 0; }
 .contact-lead { color: var(--muted); font-size: 1.07rem; }
+.call-agenda { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; gap: .75rem; counter-reset: agenda; }
+.call-agenda li { position: relative; padding-left: 2.4rem; color: var(--muted); line-height: 1.5; counter-increment: agenda; }
+.call-agenda li strong { color: var(--text); }
+.call-agenda li::before { content: counter(agenda); position: absolute; left: 0; top: .05rem; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--blue-soft); color: var(--blue-dark); font-family: var(--font-mono); font-size: .8rem; font-weight: 600; }
+.form-success #booking-link { margin-top: .5rem; }
 .contact-list { margin: 1.75rem 0 0; border-top: 2px solid var(--ink); }
 .contact-list > div { display: grid; grid-template-columns: 5.5rem 1fr; gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--rule); }
 .contact-list dt { font-family: var(--font-mono); font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding-top: .2rem; }
